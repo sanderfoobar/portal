@@ -4,8 +4,10 @@
 # See the file 'docs/LICENSE' for copying permission.
 
 import argparse
+import hashlib
 import json
 import logging
+import os
 import requests
 
 from flask import Flask, Blueprint, render_template, request
@@ -24,16 +26,22 @@ blueprint = Blueprint("index", __name__)
 def emit_options(options):
     return ",".join("%s=%s" % (k, v) for k, v in options.items())
 
+def uniqid():
+    return hashlib.md5(os.urandom(32)).hexdigest()
+
 @blueprint.route("/")
 def index():
     return render_template("index.html",
                            machines=["xp1", "xp2"],
                            routes=["none", "dirty", "vpn"])
 
-def submit_file(f, data):
+def submit_file(f, data, custom):
     files = {
         "file": (f.filename, f),
     }
+
+    custom["uniqid"] = uniqid()
+    data["custom"] = json.dumps(custom)
 
     try:
         url = "http://%s:8090/tasks/create/file" % settings.CUCKOO_API
@@ -42,8 +50,11 @@ def submit_file(f, data):
     except:
         log.exception("Error submitting file")
 
-def submit_url(url, data):
+def submit_url(url, data, custom):
     data["url"] = url
+
+    custom["uniqid"] = uniqid()
+    data["custom"] = json.dumps(custom)
 
     try:
         url = "http://%s:8090/tasks/create/url" % settings.CUCKOO_API
@@ -102,14 +113,13 @@ def submit():
         "priority": priority,
         "machine": machine,
         "options": emit_options(options),
-        "custom": json.dumps(custom),
     }
 
     for f in files:
         if not f.filename:
             continue
 
-        task_id = submit_file(f, data)
+        task_id = submit_file(f, data, custom)
         if task_id:
             tasks.append((task_id, f.filename))
         else:
@@ -120,7 +130,7 @@ def submit():
         if not url:
             continue
 
-        task_id = submit_url(url, data)
+        task_id = submit_url(url, data, custom)
         if task_id:
             tasks.append((task_id, url))
         else:
