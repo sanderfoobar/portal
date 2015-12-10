@@ -1,0 +1,78 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/css/main.css">
+        <script type="text/javascript" src="static/js/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
+                {% for error in errors %}
+                    <label><p>{{ error }}</p></label>
+                {% endfor %}
+
+                <form id="submission" method="POST" enctype="multipart/form-data" action="/">
+                    <p>Select one or more files</p>
+                    <input type="file" name="file" multiple="multiple"></input>
+                    <textarea name="url" class="form-field" placeholder="... or paste one or more URLs">{{ urls }}</textarea>
+
+                    <div class="form-group">
+                        <label for="form_route">Network routing</label>
+                        <select name="route" id="form_route" class="form-field">
+                            {% for route in routes %}
+                                <option value="{{ route }}">{{ route }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form_machine">Machine</label>
+                        <select class="form-field" id="form_machine" name="machine">
+                            <option value="">First available</option>
+                            <option value="all">All</option>
+                            {% for machine in machines %}
+                                <option value="{{ machine }}">{{ machine }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <label for="form_timeout">Timeout</label>
+                    <div class="form-group">
+                        <input class="form-field" id="form_timeout" name="timeout" type="text" placeholder="In minutes (with a maximum of 10 minutes)" value="{{ timeout }}">
+                    </div>
+
+                    <label for="form_priority">Priority</label>
+                    <div id="form_priority" class="form-group radio">
+                        <label><input type="radio" name="priority" value="1"{% if not priority or priority == 1 %} checked{% endif %}>Low</input></label>
+                        <label><input type="radio" name="priority" value="2"{% if priority == 2 %} checked{% endif %}>Medium</input></label>
+                        <label><input type="radio" name="priority" value="3"{% if priority == 3 %} checked{% endif %}>High</input></label>
+                    </div>
+
+                    <label for="form_reports">Reporting formats</label>
+                    <div id="form_reports" class="form-group checkbox">
+                        <label><input type="checkbox" name="report" value="plain" {% if not reports or "plain" in reports %}checked {% endif %}/>Plaintext</label>
+                        <label><input type="checkbox" name="report" value="html" {% if not reports or "html" in reports %}checked {% endif %}/>HTML</label>
+                        <label><input type="checkbox" name="report" value="pdf" {% if not reports or "pdf" in reports %}checked {% endif %}/>PDF</label> </div>
+
+                    <label for="form_email">Your email address</label>
+                    <div class="form-group">
+                        <input class="form-field" id="form_email" name="email" type="text" placeholder="... to receive the analysis report" value="{{ email }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-default">Analyze</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

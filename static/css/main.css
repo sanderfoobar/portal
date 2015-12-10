@@ -1,0 +1,75 @@
+form#submission {
+	margin: 50px 0px;
+}
+.dropzone {
+	border: 3px dashed #ddd;
+	height: 200px;
+	position: relative;
+	cursor: pointer;
+	width: 100%;
+	border-radius: 2px;
+	transition: border 0.3s ease-in-out;
+}
+.dropzone:hover {
+	border-color: #bbb;
+}
+.dropzone:hover p {
+	color: #aaa;
+}
+.dropzone p {
+	position: absolute;
+	top: 50%;
+	margin-top: -10px;
+	height: 20px;
+	text-align: center;
+	width: 100%;
+	color: #ccc;
+	font-size: 18px;
+	font-style: italic;
+	letter-spacing: 0.5px;
+	transition: color 0.3s ease-in-out;
+}
+#submission .form-field {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	border: 2px solid #eee;
+	border-radius: 2px;
+	transition: border 0.3s ease-in-out;	
+}
+#submission label {
+	text-align: left;
+}
+#submission .form-field:focus {
+	border-color: #ccc;
+}
+#file-url {
+	margin: 20px 0px 25px;
+}
+#submission .panel-default > .panel-heading {
+	background: none;
+	border: 0;
+	text-align: center;
+	padding-bottom: 0;
+}
+#submission .panel-default > .panel-heading + .panel-collapse > .panel-body {
+	border: 0;
+}
+
+#submission .panel-default {
+	border: 0;
+	box-shadow: none;
+}
+#submission .panel-body {
+	padding: 20px 0px 0;
+}
+#submission button {
+	background: green;
+	color: #fff;
+	padding: 10px 18px;
+	border: 1px solid #496d19;
+	font-size: 18px;
+	border-radius: 2px;
+	margin: 0 auto;
+	display: block;
+}

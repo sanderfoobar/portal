@@ -1,0 +1,309 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+            * {
+                margin: 0;
+                box-sizing: border-box;
+            }
+            html, body {
+                height: 100%;
+                font-family: 'Helvetica', Arial, sans-serif;
+            }
+            section {
+                float: left;
+                width: 100%;
+            }
+            .container {
+                max-width: 960px;
+                margin: 0 auto;
+            }
+            .row {
+                float: left;
+                width: 100%;
+                padding: 40px 0px;
+            }
+            .row:after {
+                clear: both;
+            }
+            .title {
+                float: left;
+                width: 33%;
+            }
+            .title h2 {
+                text-align: right;
+                border-bottom: 1px solid #ddd;
+                padding-right: 30px;
+                padding-bottom: 15px;
+                padding-top: 15px;
+                line-height: 1.2em;
+            }
+            .content {
+                float: left;
+                width: 67%;
+                border-left: 1px solid #ddd;
+                padding-left: 30px;
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+            .score-10 {
+                background: #c42600;
+            }
+            .score-10 .title h2,
+            .score-10 .content {
+                border-color: rgba(255, 255, 255, 0.2);
+                color: #fff;
+            }
+            .score-49 {
+                background: #f6e232;
+            }
+            .score-49 .title h2,
+            .score-49 .content {
+                border-color: rgba(179, 166, 0, 0.4);
+                color: #000;
+            }
+            .score-03 {
+                background: #51ab47;
+            }
+            .score-03 .title h2,
+            .score-03 .content {
+                border-color:rgba(64, 142, 57, 1);
+                color: #000;
+            }
+            .score .content p {
+                font-size: 60px;
+                letter-spacing: -2px;
+                font-weight: bold;
+            }
+            .content ul {
+                padding: 0;
+                list-style-position: inside;
+            }
+            .content ul li {
+                line-height: 1.55em;
+            }
+            .content ul.has-codes {
+                list-style-type: none;
+            }
+            .content ul.has-codes li.code-yellow span {
+                background: #f7e400;
+            }
+            .content ul.has-codes li.code-yellow {
+                color: #b4a601;
+            }
+            .content ul.has-codes li.code-red span {
+                background: #c22813;
+            }
+            .content ul.has-codes li.code-red {
+                color: #c22813;
+            }
+            .content ul.has-codes li.code-green span {
+                background: #a6eea4;
+            }
+            .content ul.has-codes li.code-green {
+                color: #51ab47;
+            }
+            .content ul li span {
+                width: 12px;
+                height: 12px;
+                display: inline-block;
+                border-radius: 2px;
+                margin-right: 3px;
+            }
+            .logo {
+                background: #222;
+            }
+            .logo .title {
+                width: 100%;
+                text-align: center;
+                position: relative;
+            }
+            .logo img {
+                max-width: 230px;
+                position: absolute;
+                top: -12px;
+                right: 0;
+                background: #fff;
+                padding: 5px;
+                border-bottom-right-radius: 6px;
+                border-bottom-left-radius: 6px;
+                border: 5px solid #222;
+            }
+            .logo .row {
+                padding: 5px 0px 0px;
+            }
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+            table {
+                width: 100%;
+            }
+            tr th,
+            tr td {
+                text-align: left;
+                padding: 10px;
+            }
+            .score .title ul {
+                list-style-type: none;
+                margin-top: 15px;
+            }
+            .score .title ul li {
+                text-align: right;
+                padding-right: 30px;
+                color: rgba(255,255,255,0.8);
+                line-height: 1.55em;
+            }
+            .score .content ul {
+                list-style-type: none;
+            }
+        </style>
+    </head>
+    <body>
+        <section class="logo">
+            <div class="container">
+                <div class="row">
+                    <div class="title"><img src="static/img/cuckoo.png" alt=""></div>
+                </div>
+            </div>
+        </section>
+        <section class="score score-10">
+            <div class="container">
+                <div class="row">
+                    <div class="title">
+                        <h2>Analysis score</h2>
+                        <ul>
+                            <li>URL</li>
+                            <li>Filename</li>
+                            <li>Filesize</li>
+                            <li>Filetype</li>
+                        </ul>
+                    </div>
+                    <div class="content">
+                        <p>10</p>
+                        <ul>
+                            <li>http://duckduckgo.com</li>
+                            <li>Duck.jpg</li>
+                            <li>500 KB</li>
+                            <li>JPG</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="signatures">
+            <div class="container">
+                <div class="row">
+                    <div class="title">
+                        <h2>Signatures triggered</h2>
+                    </div>
+                    <div class="content">
+                        <ul class="has-codes">
+                            <li class="code-yellow"><span></span> Allocates read-write-execute memory (usually to unpack itself)</li>
+                            <li class="code-yellow"><span></span> Creates executable files on the filesystem</li>
+                            <li class="code-red"><span></span> Detects VirtualBox through the presence of a device</li>
+                            <li class="code-green"><span></span> Detects VMWare through the presence of various files</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="addresses">
+            <div class="container">
+                <div class="row">
+                    <div class="title">
+                        <h2>IP addresses connected</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            <li>145.221.194.227</li>
+                            <li>145.221.54.14</li>
+                            <li>145.221.54.5</li>
+                            <li>204.79.197.200</li>
+                            <li>23.40.251.4</li>
+                            <li>23.51.123.27</li>
+                            <li>8.8.8.8</li>
+                            <li>92.122.122.161</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="domains">
+            <div class="container">
+                <div class="row">
+                    <div class="title">
+                        <h2>Domains looked up</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            <li>www.bing.com</li>
+                            <li>www.ing.nl</li>
+                            <li>dns.msftncsi.com</li>
+                            <li>mon.retail.ing.nl</li>
+                            <li>www.msftncsi.com</li>
+                            <li>bankieren.mijn.ing.nl</li>
+                            <li>s2.symcb.com</li>
+                            <li>bankieren.mijnzakelijk.ing.nl</li>
+                            <li>mijn.ing.nl</li>
+                            <li>sr.symcd.com</li>
+                            <li>dns.msftncsi.com</li>
+                            <li>teredo.ipv6.microsoft.com</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="files">
+            <div class="container">
+                <div class="row">
+                    <div class="title">
+                        <h2>Dropped file hashes</h2>
+                    </div>
+                    <div class="content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Hash</th>
+                                    <th>Filename</th>
+                                    <th>Filesize</th>
+                                    <th>Filetype</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>9ff7502a444724d17443b0c612594cb4</td>
+                                    <td>a.txt</td>
+                                    <td>1234</td>
+                                    <td>ASCII text</td>
+                                </tr>
+                                <tr>
+                                    <td>9df70b9958531d3769120e4bd60956c1</td>
+                                    <td>b.exe</td>
+                                    <td>56000</td>
+                                    <td>PE32 executable</td>
+                                </tr>
+                                <tr>
+                                    <td>46d22ceacc9929bd3d96eddc57448821</td>
+                                    <td>c.zip</td>
+                                    <td>10000</td>
+                                    <td>ZIP File</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
