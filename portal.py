@@ -70,7 +70,7 @@ def submit():
     timeout = request.form.get("timeout")
     priority = request.form.get("priority")
     machine = request.form.get("machine")
-    route = request.form.get("route")
+    route = request.form.get("route", "none")
     email = request.form.get("email")
     reports = request.form.getlist("report")
 
