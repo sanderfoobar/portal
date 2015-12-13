@@ -10,7 +10,7 @@ import logging
 import os
 import requests
 
-from flask import Flask, Blueprint, render_template, request
+from flask import Flask, Blueprint, render_template, redirect, request
 from flask.ext.sqlalchemy import SQLAlchemy
 
 import settings
@@ -46,7 +46,7 @@ def submit_file(f, data, custom):
     try:
         url = "http://%s:8090/tasks/create/file" % settings.CUCKOO_API
         r = requests.post(url, data=data, files=files)
-        return r.json()["task_id"]
+        return "%s%x" % (custom["uniqid"], r.json()["task_id"])
     except:
         log.exception("Error submitting file")
 
@@ -59,7 +59,7 @@ def submit_url(url, data, custom):
     try:
         url = "http://%s:8090/tasks/create/url" % settings.CUCKOO_API
         r = requests.post(url, data=data)
-        return r.json()["task_id"]
+        return "%s%x" % (custom["uniqid"], r.json()["task_id"])
     except:
         log.exception("Error submitting URL")
 
@@ -119,9 +119,9 @@ def submit():
         if not f.filename:
             continue
 
-        task_id = submit_file(f, data, custom)
-        if task_id:
-            tasks.append((task_id, f.filename))
+        uniqid = submit_file(f, data, custom)
+        if uniqid:
+            tasks.append((uniqid, f.filename))
         else:
             errors.append("Error submitting file: %s" % f.filename)
 
@@ -130,9 +130,9 @@ def submit():
         if not url:
             continue
 
-        task_id = submit_url(url, data, custom)
-        if task_id:
-            tasks.append((task_id, url))
+        uniqid = submit_url(url, data, custom)
+        if uniqid:
+            tasks.append((uniqid, url))
         else:
             errors.append("Error submitting URL: %s" % url)
 
@@ -148,6 +148,45 @@ def submit():
         return render_template("index.html", **locals())
 
     return render_template("submitted.html", **locals())
+
+def report_plain(report):
+    pass
+
+def report_html(report):
+    return render_template("report.html", report=report)
+
+def report_pdf(report):
+    pass
+
+report_formats = {
+    "txt": report_plain,
+    "html": report_html,
+    "pdf": report_pdf,
+}
+
+@blueprint.route("/report/<string:uniqid>.<string:filetype>")
+def report(uniqid, filetype):
+    if filetype not in report_formats:
+        return redirect("/")
+
+    task_id = uniqid[32:].decode("hex")
+    if not task_id or not task_id.isdigit():
+        return redirect("/")
+
+    try:
+        r = requests.get("http://%s:8090/tasks/report/%s" % task_id)
+        if r.status_code != 200:
+            return render_template("refresh.html")
+
+        r = r.json()
+
+        # Basic authentication so people can only view their own analyses.
+        if r["info"]["custom"] != uniqid[:32]:
+            return redirect("/")
+
+        return report_formats[filetype](r.json())
+    except:
+        log.exception("Error retrieving report")
 
 def create_app():
     app = Flask("Portal")

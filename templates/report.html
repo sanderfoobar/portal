@@ -179,19 +179,26 @@
                     <div class="title">
                         <h2>Analysis score</h2>
                         <ul>
-                            <li>URL</li>
-                            <li>Filename</li>
-                            <li>Filesize</li>
-                            <li>Filetype</li>
+                            {% if report.target.category == "url" %}
+                                <li>URL</li>
+                            {% endif %}
+                            {% if report.target.category == "file" %}
+                                <li>Filename</li>
+                                <li>Filesize</li>
+                                <li>Filetype</li>
+                            {% endif %}
                         </ul>
                     </div>
                     <div class="content">
-                        <p>10</p>
+                        <p>{{ report.info.score }}</p>
                         <ul>
-                            <li>http://duckduckgo.com</li>
-                            <li>Duck.jpg</li>
-                            <li>500 KB</li>
-                            <li>JPG</li>
+                            {% if report.target.category == "url" %}
+                                <li>{{ report.target.url }}</li>
+                            {% elif report.target.category == "file" %}
+                                <li>{{ report.target.file.name }}</li>
+                                <li>{{ report.target.file.size }}</li>
+                                <li>{{ report.target.file.type }}</li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
