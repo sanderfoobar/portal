@@ -52,11 +52,11 @@
                 padding-top: 15px;
                 padding-bottom: 15px;
             }
-            .score-10 {
+            .score-red {
                 background: #c42600;
             }
-            .score-10 .title h2,
-            .score-10 .content {
+            .score-red .title h2,
+            .score-red .content {
                 border-color: rgba(255, 255, 255, 0.2);
                 color: #fff;
             }
@@ -145,8 +145,7 @@
             table {
                 width: 100%;
             }
-            tr th,
-            tr td {
+            tr th, tr td {
                 text-align: left;
                 padding: 10px;
             }
@@ -173,7 +172,14 @@
                 </div>
             </div>
         </section>
-        <section class="score score-10">
+        {% if report.info.score < 2 %}
+            <section class="score score-green">
+        {% elif report.info.score < 4 %}
+            <section class="score score-yellow">
+        {% else %}
+            <section class="score score-red">
+        {% endif %}
+
             <div class="container">
                 <div class="row">
                     <div class="title">
@@ -205,6 +211,7 @@
             </div>
         </section>
 
+        {% if report.signatures %}
         <section class="signatures">
             <div class="container">
                 <div class="row">
@@ -213,16 +220,26 @@
                     </div>
                     <div class="content">
                         <ul class="has-codes">
-                            <li class="code-yellow"><span></span> Allocates read-write-execute memory (usually to unpack itself)</li>
-                            <li class="code-yellow"><span></span> Creates executable files on the filesystem</li>
-                            <li class="code-red"><span></span> Detects VirtualBox through the presence of a device</li>
-                            <li class="code-green"><span></span> Detects VMWare through the presence of various files</li>
+                            {% for signature in report.signatures %}
+                                {% if signature.severity == 1 %}
+                                    <li class="code-blue"><span></span>
+                                {% elif signature.severity == 2 %}
+                                    <li class="code-yellow"><span></span>
+                                {% else %}
+                                    <li class="code-red"><span></span>
+                                {% endif %}
+
+                                {{ signature.description }}
+                                </li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
+        {% endif %}
 
+        {% if report.network.hosts %}
         <section class="addresses">
             <div class="container">
                 <div class="row">
@@ -231,20 +248,17 @@
                     </div>
                     <div class="content">
                         <ul>
-                            <li>145.221.194.227</li>
-                            <li>145.221.54.14</li>
-                            <li>145.221.54.5</li>
-                            <li>204.79.197.200</li>
-                            <li>23.40.251.4</li>
-                            <li>23.51.123.27</li>
-                            <li>8.8.8.8</li>
-                            <li>92.122.122.161</li>
+                            {% for host in report.network.hosts %}
+                                <li>{{ host }}</li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
+        {% endif %}
 
+        {% if report.network.dns %}
         <section class="domains">
             <div class="container">
                 <div class="row">
@@ -253,24 +267,17 @@
                     </div>
                     <div class="content">
                         <ul>
-                            <li>www.bing.com</li>
-                            <li>www.ing.nl</li>
-                            <li>dns.msftncsi.com</li>
-                            <li>mon.retail.ing.nl</li>
-                            <li>www.msftncsi.com</li>
-                            <li>bankieren.mijn.ing.nl</li>
-                            <li>s2.symcb.com</li>
-                            <li>bankieren.mijnzakelijk.ing.nl</li>
-                            <li>mijn.ing.nl</li>
-                            <li>sr.symcd.com</li>
-                            <li>dns.msftncsi.com</li>
-                            <li>teredo.ipv6.microsoft.com</li>
+                            {% for domain in report.network.dns %}
+                                <li>{{ domain.request }}</li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
+        {% endif %}
 
+        {% if report.dropped %}
         <section class="files">
             <div class="container">
                 <div class="row">
@@ -281,36 +288,27 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Hash</th>
+                                    <th>sha1</th>
                                     <th>Filename</th>
                                     <th>Filesize</th>
                                     <th>Filetype</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>9ff7502a444724d17443b0c612594cb4</td>
-                                    <td>a.txt</td>
-                                    <td>1234</td>
-                                    <td>ASCII text</td>
-                                </tr>
-                                <tr>
-                                    <td>9df70b9958531d3769120e4bd60956c1</td>
-                                    <td>b.exe</td>
-                                    <td>56000</td>
-                                    <td>PE32 executable</td>
-                                </tr>
-                                <tr>
-                                    <td>46d22ceacc9929bd3d96eddc57448821</td>
-                                    <td>c.zip</td>
-                                    <td>10000</td>
-                                    <td>ZIP File</td>
-                                </tr>
+                                {% for dropped in report.dropped %}
+                                    <tr>
+                                        <td>{{ dropped.sha1 }}</td>
+                                        <td>{{ dropped.name }}</td>
+                                        <td>{{ dropped.size }}</td>
+                                        <td>{{ dropped.type }}</td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </section>
+        {% endif %}
     </body>
 </html>

@@ -1,0 +1,31 @@
+Automated Malware Analysis report by Cuckoo Sandbox 2.0.
+Copyright 2010-2015 Cuckoo Technologies.
+
+{% if report.target.category == "url" -%}
+URL: {{ report.target.url }}
+{% elif report.target.category == "file" -%}
+File: {{ report.target.file.name }}
+Size: {{ report.target.file.size }}
+Type: {{ report.target.file.type }}
+{% endif %}
+
+{%- if report.signatures %}
+Signatures:
+{% for signature in report.signatures %}
+  [{{ signature.severity }}] {{ signature.description }}
+{% endfor %}
+{% endif %}
+
+{%- if report.network.hosts %}
+IP addresses:
+{% for host in report.network.hosts %}
+    {{ host -}}
+{% endfor %}
+{% endif %}
+
+{%- if report.network.dns %}
+Hostnames:
+{% for domain in report.network.dns %}
+    {{ domain.request -}}
+{% endfor %}
+{% endif %}

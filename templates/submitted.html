@@ -207,8 +207,8 @@
                         <h2>Submitted Files/URLs</h2>
                     </div>
                     <div class="content">
-                        {% for task_id, target in tasks %}
-                            <p>{{ target }}</p>
+                        {% for uniqid, target in tasks %}
+                            <a href="/report/{{ uniqid }}.html">{{ target }}</a>
                         {% endfor %}
                     </div>
                 </div>

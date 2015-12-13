@@ -9,8 +9,9 @@ import json
 import logging
 import os
 import requests
+import weasyprint
 
-from flask import Flask, Blueprint, render_template, redirect, request
+from flask import Flask, Blueprint, render_template, request
 from flask.ext.sqlalchemy import SQLAlchemy
 
 import settings
@@ -30,10 +31,11 @@ def uniqid():
     return hashlib.md5(os.urandom(32)).hexdigest()
 
 @blueprint.route("/")
-def index():
+def index(**kwargs):
     return render_template("index.html",
                            machines=["xp1", "xp2"],
-                           routes=["none", "dirty", "vpn"])
+                           routes=["none", "dirty", "vpn"],
+                           **kwargs)
 
 def submit_file(f, data, custom):
     files = {
@@ -150,13 +152,14 @@ def submit():
     return render_template("submitted.html", **locals())
 
 def report_plain(report):
-    pass
+    return render_template("report.txt", report=report)
 
 def report_html(report):
     return render_template("report.html", report=report)
 
 def report_pdf(report):
-    pass
+    html = render_template("report.html", report=report)
+    return weasyprint.HTML(string=html).write_pdf()
 
 report_formats = {
     "txt": report_plain,
@@ -167,26 +170,34 @@ report_formats = {
 @blueprint.route("/report/<string:uniqid>.<string:filetype>")
 def report(uniqid, filetype):
     if filetype not in report_formats:
-        return redirect("/")
-
-    task_id = uniqid[32:].decode("hex")
-    if not task_id or not task_id.isdigit():
-        return redirect("/")
+        return index(error="Invalid report extension")
 
     try:
-        r = requests.get("http://%s:8090/tasks/report/%s" % task_id)
-        if r.status_code != 200:
-            return render_template("refresh.html")
+        task_id = int(uniqid[32:], 16)
+    except ValueError:
+        return index(error="Invalid task identifier")
 
-        r = r.json()
+    try:
+        url = "http://%s:8090/tasks/report/%s" % (settings.CUCKOO_API, task_id)
+        r = requests.get(url)
+    except requests.RequestException:
+        return index(error="It would appear our Cuckoo backend is down, "
+                     "please contact us at your earliest convenience.")
 
-        # Basic authentication so people can only view their own analyses.
-        if r["info"]["custom"] != uniqid[:32]:
-            return redirect("/")
+    if r.status_code != 200:
+        return render_template("refresh.html")
 
-        return report_formats[filetype](r.json())
+    # We put a JSON blob in there, let's try to get it back.
+    try:
+        c = json.loads(r.json()["info"]["custom"])
     except:
-        log.exception("Error retrieving report")
+        return index(error="Invalid Cuckoo task")
+
+    # Basic authentication so people can only view their own analyses.
+    if c["uniqid"] != uniqid[:32]:
+        return index(error="Task authentication failed")
+
+    return report_formats[filetype](r.json())
 
 def create_app():
     app = Flask("Portal")
