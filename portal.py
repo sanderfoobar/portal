@@ -152,7 +152,8 @@ def submit():
     return render_template("submitted.html", **locals())
 
 def report_plain(report):
-    return render_template("report.txt", report=report)
+    template = render_template("report.txt", report=report)
+    return template, 200, {"Content-Type": "text/plain; charset=utf-8"}
 
 def report_html(report):
     return render_template("report.html", report=report)
