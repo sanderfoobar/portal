@@ -152,15 +152,16 @@ def submit():
     return render_template("submitted.html", **locals())
 
 def report_plain(report):
-    template = render_template("report.txt", report=report)
-    return template, 200, {"Content-Type": "text/plain; charset=utf-8"}
+    report = render_template("report.txt", report=report)
+    return report, 200, {"Content-Type": "text/plain; charset=utf-8"}
 
 def report_html(report):
     return render_template("report.html", report=report)
 
 def report_pdf(report):
     html = render_template("report.html", report=report)
-    return weasyprint.HTML(string=html).write_pdf()
+    report = weasyprint.HTML(string=html).write_pdf()
+    return report, 200, {"Content-Type": "application/pdf"}
 
 report_formats = {
     "txt": report_plain,
