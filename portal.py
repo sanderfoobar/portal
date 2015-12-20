@@ -159,7 +159,9 @@ def report_html(report):
     return render_template("report.html", report=report)
 
 def report_pdf(report):
-    html = render_template("report.html", report=report)
+    cuckoopng = open("static/img/cuckoo.png", "rb").read()
+    cuckoopng = cuckoopng.encode("base64").replace("\n", "")
+    html = render_template("report.html", report=report, cuckoopng=cuckoopng)
     report = weasyprint.HTML(string=html).write_pdf()
     return report, 200, {"Content-Type": "application/pdf"}
 

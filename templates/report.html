@@ -168,7 +168,11 @@
         <section class="logo">
             <div class="container">
                 <div class="row">
+                    {% if cuckoopng %}
+                    <div class="title"><img src="data:image/png;base64,{{ cuckoopng }}" alt=""></div>
+                    {% else %}
                     <div class="title"><img src="/static/img/cuckoo.png" alt=""></div>
+                    {% endif %}
                 </div>
             </div>
         </section>
