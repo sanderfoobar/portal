@@ -25,7 +25,7 @@ db = SQLAlchemy(session_options=dict(autoflush=True))
 blueprint = Blueprint("index", __name__)
 
 def emit_options(options):
-    return ",".join("%s=%s" % (k, v) for k, v in options.items())
+    return ",".join("%s=%s" % (k, v) for k, v in options.items() if v)
 
 def uniqid():
     return hashlib.md5(os.urandom(32)).hexdigest()
@@ -72,7 +72,7 @@ def submit():
     timeout = request.form.get("timeout")
     priority = request.form.get("priority")
     machine = request.form.get("machine")
-    route = request.form.get("route", "none")
+    route = request.form.get("route")
     email = request.form.get("email")
     reports = request.form.getlist("report")
 
