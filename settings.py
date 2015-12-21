@@ -11,4 +11,4 @@ SQLALCHEMY_DATABASE_URI = "postgresql://cuckoo:cuckoo@localhost/portal"
 SECRET_KEY = os.urandom(32)
 
 # IP address of the Cuckoo API.
-CUCKOO_API = "127.0.0.1"
+CUCKOO_API = "127.0.0.1:8090"

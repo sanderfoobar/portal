@@ -46,7 +46,7 @@ def submit_file(f, filename, data, custom):
     data["custom"] = json.dumps(custom)
 
     try:
-        url = "http://%s:8090/tasks/create/file" % settings.CUCKOO_API
+        url = "http://%s/tasks/create/file" % settings.CUCKOO_API
         r = requests.post(url, data=data, files=files)
         return "%s%x" % (custom["uniqid"], r.json()["task_id"])
     except:
@@ -59,7 +59,7 @@ def submit_url(url, data, custom):
     data["custom"] = json.dumps(custom)
 
     try:
-        url = "http://%s:8090/tasks/create/url" % settings.CUCKOO_API
+        url = "http://%s/tasks/create/url" % settings.CUCKOO_API
         r = requests.post(url, data=data)
         return "%s%x" % (custom["uniqid"], r.json()["task_id"])
     except:
@@ -182,7 +182,7 @@ def report(uniqid, filetype):
         return index(error="Invalid task identifier")
 
     try:
-        url = "http://%s:8090/tasks/report/%s" % (settings.CUCKOO_API, task_id)
+        url = "http://%s/tasks/report/%s" % (settings.CUCKOO_API, task_id)
         r = requests.get(url)
     except requests.RequestException:
         return index(error="It would appear our Cuckoo backend is down, "
