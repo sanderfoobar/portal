@@ -111,7 +111,7 @@ def submit():
     }
 
     data = {
-        "timeout": timeout * 60,
+        "timeout": int(timeout) * 60,
         "priority": priority,
         "machine": machine,
         "options": emit_options(options),
