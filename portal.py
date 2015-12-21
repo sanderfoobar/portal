@@ -91,7 +91,7 @@ def submit():
     if not email:
         errors.append("Please specify an email address so to retrieve the analysis reports.")
 
-    if "plain" not in reports and "html" not in reports and "pdf" not in reports:
+    if "txt" not in reports and "html" not in reports and "pdf" not in reports:
         errors.append("You must select at least one reporting format.")
 
     if errors:

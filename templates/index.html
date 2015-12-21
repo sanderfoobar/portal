@@ -64,7 +64,7 @@
 
                     <label for="form_reports">Reporting formats (to receive per email)</label>
                     <div id="form_reports" class="form-group checkbox">
-                        <label><input type="checkbox" name="report" value="txt" {% if not reports or "plain" in reports %}checked {% endif %}/>Plaintext</label>
+                        <label><input type="checkbox" name="report" value="txt" {% if not reports or "txt" in reports %}checked {% endif %}/>Plaintext</label>
                         <label><input type="checkbox" name="report" value="html" {% if not reports or "html" in reports %}checked {% endif %}/>HTML</label>
                         <label><input type="checkbox" name="report" value="pdf" {% if not reports or "pdf" in reports %}checked {% endif %}/>PDF</label> </div>
 
