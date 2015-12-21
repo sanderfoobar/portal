@@ -1,162 +1,152 @@
-<!doctype html>
-<html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/static/css/main.css">
-    </head>
-    <body>
-        <section class="logo">
-            <div class="container">
-                <div class="row">
-                    {% if cuckoopng %}
-                    <div class="title"><img src="data:image/png;base64,{{ cuckoopng }}" alt=""></div>
-                    {% else %}
-                    <div class="title"><img src="/static/img/cuckoo.png" alt=""></div>
-                    {% endif %}
+{% extends "base.html" %}
+{% block content %}
+
+    {% if report.info.score < 2 %}
+        <section class="score score-green">
+    {% elif report.info.score < 4 %}
+        <section class="score score-yellow">
+    {% else %}
+        <section class="score score-red">
+    {% endif %}
+
+        <div class="container">
+            <div class="row" id="animate">
+                <div class="title">
+                    <h2>Analysis score</h2>
+                    <ul>
+                        {% if report.target.category == "url" %}
+                            <li>URL</li>
+                        {% endif %}
+                        {% if report.target.category == "file" %}
+                            <li>Filename</li>
+                            <li>Filesize</li>
+                            <li>Filetype</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="content">
+                    <p>{{ report.info.score }}</p>
+                    <ul>
+                        {% if report.target.category == "url" %}
+                            <li style="word-break: break-all;">{{ report.target.url }}</li>
+                        {% elif report.target.category == "file" %}
+                            <li><b>{{ report.target.file.name }}</b></li>
+                            <li>{{ report.target.file.size }}</li>
+                            <li>{{ report.target.file.type }}</li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
-        </section>
-        {% if report.info.score < 2 %}
-            <section class="score score-green">
-        {% elif report.info.score < 4 %}
-            <section class="score score-yellow">
-        {% else %}
-            <section class="score score-red">
-        {% endif %}
+        </div>
 
-            <div class="container">
-                <div class="row">
-                    <div class="title">
-                        <h2>Analysis score</h2>
-                        <ul>
-                            {% if report.target.category == "url" %}
-                                <li>URL</li>
+    </section>
+
+    {% if report.signatures %}
+    <section class="signatures">
+        <div class="container">
+            <div class="row">
+                <div class="title">
+                    <h2>Signatures triggered</h2>
+                </div>
+                <div class="content">
+                    <ul class="has-codes">
+                        {% for signature in report.signatures %}
+                            {% if signature.severity == 1 %}
+                                <li class="code-blue"><span></span>
+                            {% elif signature.severity == 2 %}
+                                <li class="code-yellow"><span></span>
+                            {% else %}
+                                <li class="code-red"><span></span>
                             {% endif %}
-                            {% if report.target.category == "file" %}
-                                <li>Filename</li>
-                                <li>Filesize</li>
-                                <li>Filetype</li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                    <div class="content">
-                        <p>{{ report.info.score }}</p>
-                        <ul>
-                            {% if report.target.category == "url" %}
-                                <li>{{ report.target.url }}</li>
-                            {% elif report.target.category == "file" %}
-                                <li>{{ report.target.file.name }}</li>
-                                <li>{{ report.target.file.size }}</li>
-                                <li>{{ report.target.file.type }}</li>
-                            {% endif %}
-                        </ul>
-                    </div>
+
+                            {{ signature.description }}
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+    {% endif %}
 
-        {% if report.signatures %}
-        <section class="signatures">
-            <div class="container">
-                <div class="row">
-                    <div class="title">
-                        <h2>Signatures triggered</h2>
-                    </div>
-                    <div class="content">
-                        <ul class="has-codes">
-                            {% for signature in report.signatures %}
-                                {% if signature.severity == 1 %}
-                                    <li class="code-blue"><span></span>
-                                {% elif signature.severity == 2 %}
-                                    <li class="code-yellow"><span></span>
-                                {% else %}
-                                    <li class="code-red"><span></span>
-                                {% endif %}
-
-                                {{ signature.description }}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+    {% if report.network.hosts %}
+    <section class="addresses">
+        <div class="container">
+            <div class="row">
+                <div class="title">
+                    <h2>IP addresses connected</h2>
+                </div>
+                <div class="content">
+                    <ul>
+                        {% for host in report.network.hosts %}
+                            <li>{{ host }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-        </section>
-        {% endif %}
+        </div>
+    </section>
+    {% endif %}
 
-        {% if report.network.hosts %}
-        <section class="addresses">
-            <div class="container">
-                <div class="row">
-                    <div class="title">
-                        <h2>IP addresses connected</h2>
-                    </div>
-                    <div class="content">
-                        <ul>
-                            {% for host in report.network.hosts %}
-                                <li>{{ host }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+    {% if report.network.dns %}
+    <section class="domains">
+        <div class="container">
+            <div class="row">
+                <div class="title">
+                    <h2>Domains looked up</h2>
+                </div>
+                <div class="content">
+                    <ul>
+                        {% for domain in report.network.dns %}
+                            <li>{{ domain.request }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-        </section>
-        {% endif %}
+        </div>
+    </section>
+    {% endif %}
 
-        {% if report.network.dns %}
-        <section class="domains">
-            <div class="container">
-                <div class="row">
-                    <div class="title">
-                        <h2>Domains looked up</h2>
-                    </div>
-                    <div class="content">
-                        <ul>
-                            {% for domain in report.network.dns %}
-                                <li>{{ domain.request }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+    {% if report.dropped %}
+    <section class="files">
+        <div class="container">
+            <div class="row">
+                <div class="title">
+                    <h2>Dropped file hashes</h2>
                 </div>
-            </div>
-        </section>
-        {% endif %}
-
-        {% if report.dropped %}
-        <section class="files">
-            <div class="container">
-                <div class="row">
-                    <div class="title">
-                        <h2>Dropped file hashes</h2>
-                    </div>
-                    <div class="content">
-                        <table>
-                            <thead>
+                <div class="content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>sha1</th>
+                                <th>Filename</th>
+                                <th>Filesize</th>
+                                <th>Filetype</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dropped in report.dropped %}
                                 <tr>
-                                    <th>sha1</th>
-                                    <th>Filename</th>
-                                    <th>Filesize</th>
-                                    <th>Filetype</th>
+                                    <td>{{ dropped.sha1 }}</td>
+                                    <td>{{ dropped.name }}</td>
+                                    <td>{{ dropped.size }}</td>
+                                    <td>{{ dropped.type }}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {% for dropped in report.dropped %}
-                                    <tr>
-                                        <td>{{ dropped.sha1 }}</td>
-                                        <td>{{ dropped.name }}</td>
-                                        <td>{{ dropped.size }}</td>
-                                        <td>{{ dropped.type }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </section>
-        {% endif %}
-    </body>
-</html>
+        </div>
+    </section>
+    {% endif %}
+
+    <script>
+        $(document).ready(function() {
+            setTimeout(function(){
+                $("#animate").animate({'opacity': 1}, 300);
+            }, 200);
+        });
+
+    </script>
+{% endblock %}

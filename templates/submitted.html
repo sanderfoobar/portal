@@ -1,79 +1,64 @@
-<!doctype html>
-<html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/static/css/main.css">
-    </head>
-    <body>
-        <section class="logo">
-            <div class="container">
-                <div class="row">
-                    <div class="title"><img src="/static/img/cuckoo.png" alt=""></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="score score-03">
-            <div class="container">
-                <div class="row">
+{% extends "base.html" %}
+{% block content %}
+    <section class="score score-green">
+        <div class="container">
+            <div class="row">
+                <b>
                     {% if tasks|length == 1 %}
                         Submitted 1 analysis. <br />
                     {% else %}
                         Submitted {{ tasks|length }} analyses. <br />
                     {% endif %}
-                    Timeout: <strong>{{ timeout }} minutes</strong><br />
-                    Reports:
-                        {% if "plain" in reports %}
-                            <strong>Plaintext</strong>
-                        {% endif %}
-                        {% if "html" in reports %}
-                            <strong>HTML</strong>
-                        {% endif %}
-                        {% if "pdf" in reports %}
-                            <strong>PDF</strong>
-                        {% endif %}
-                    <br />
-                    Email: <strong>{{ email }}</strong> <br />
-                </div>
-            </div>
-        </section>
+                </b>
 
-        {% if tasks %}
-        <section class="files">
-            <div class="container">
-                <div class="row">
-                    <div class="title">
-                        <h2>Submitted Files/URLs</h2>
-                    </div>
-                    <div class="content">
-                        {% for uniqid, target in tasks %}
-                            <a href="/report/{{ uniqid }}.html">{{ target }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
+                Timeout: <strong>{{ timeout }} minutes</strong><br />
+                Reports:
+                    {% if "plain" in reports %}
+                        <strong>Plaintext</strong>
+                    {% endif %}
+                    {% if "html" in reports %}
+                        <strong>HTML</strong>
+                    {% endif %}
+                    {% if "pdf" in reports %}
+                        <strong>PDF</strong>
+                    {% endif %}
+                <br />
+                Email: <strong>{{ email }}</strong> <br />
             </div>
-        </section>
-        {% endif %}
+        </div>
+    </section>
 
-        {% if errors %}
-        <section class="errors">
-            <div class="container">
-                <div class="row">
-                    <div class="title">
-                        <h2>Errors</h2>
-                    </div>
-                    <div class="content">
-                        {% for error in errors %}
-                            <p><strong>{{ error }}</strong></p>
-                        {% endfor %}
-                    </div>
+    {% if tasks %}
+    <section class="files">
+        <div class="container">
+            <div class="row">
+                <div class="title">
+                    <h2>Submitted Files/URLs</h2>
+                </div>
+                <div class="content">
+                    {% for uniqid, target in tasks %}
+                        <a style="word-break: break-all;" href="/report/{{ uniqid }}.html">{{ target }}</a>
+                    {% endfor %}
                 </div>
             </div>
-        </section>
-        {% endif %}
-    </body>
-</html>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if errors %}
+    <section class="errors">
+        <div class="container">
+            <div class="row">
+                <div class="title">
+                    <h2>Errors</h2>
+                </div>
+                <div class="content">
+                    {% for error in errors %}
+                        <p><strong>{{ error }}</strong></p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}
