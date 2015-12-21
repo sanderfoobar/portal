@@ -10,8 +10,9 @@ import logging
 import os
 import requests
 import weasyprint
+from lepl.apps.rfc3696 import HttpUrl, Email
 
-from flask import Flask, Blueprint, render_template, request
+from flask import Flask, Blueprint, render_template, request, Response
 from flask.ext.sqlalchemy import SQLAlchemy
 
 import settings
@@ -19,6 +20,7 @@ import settings
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("lepl").setLevel(logging.ERROR)
 log = logging.getLogger("cuckoo.portal")
 
 db = SQLAlchemy(session_options=dict(autoflush=True))
@@ -46,8 +48,12 @@ def submit_file(f, data, custom):
     data["custom"] = json.dumps(custom)
 
     try:
-        url = "http://%s:8090/tasks/create/file" % settings.CUCKOO_API
+        url = "%s/tasks/create/file" % settings.CUCKOO_API
         r = requests.post(url, data=data, files=files)
+
+        if not r.status_code == 200:
+            raise Exception()
+
         return "%s%x" % (custom["uniqid"], r.json()["task_id"])
     except:
         log.exception("Error submitting file")
@@ -59,11 +65,33 @@ def submit_url(url, data, custom):
     data["custom"] = json.dumps(custom)
 
     try:
-        url = "http://%s:8090/tasks/create/url" % settings.CUCKOO_API
+        url = "%s/tasks/create/url" % settings.CUCKOO_API
         r = requests.post(url, data=data)
+
+        if not r.status_code == 200:
+            raise Exception()
+
         return "%s%x" % (custom["uniqid"], r.json()["task_id"])
     except:
         log.exception("Error submitting URL")
+
+@blueprint.route("/validate")
+def validate():
+    if 'url' in request.args:
+        url = request.args.get('url')
+        validator = HttpUrl()
+
+        lines = url.split('\n')
+        for line in lines:
+            line = line.strip()
+
+            if not line:
+                continue
+
+            if not validator(line):
+                return Response('Validation failed', 400)
+
+    return Response('Validation ok', 200)
 
 @blueprint.route("/", methods=["POST"])
 def submit():
@@ -88,8 +116,8 @@ def submit():
     else:
         priority = int(priority)
 
-    if not email:
-        errors.append("Please specify an email address so to retrieve the analysis reports.")
+    if not email or not Email()(email):
+        errors.append("Please specify a correct email address so to retrieve the analysis reports.")
 
     if "plain" not in reports and "html" not in reports and "pdf" not in reports:
         errors.append("You must select at least one reporting format.")
@@ -111,7 +139,7 @@ def submit():
     }
 
     data = {
-        "timeout": timeout * 60,
+        "timeout": int(timeout) * 60,
         "priority": priority,
         "machine": machine,
         "options": emit_options(options),
@@ -178,7 +206,7 @@ def report(uniqid, filetype):
         return index(error="Invalid task identifier")
 
     try:
-        url = "http://%s:8090/tasks/report/%s" % (settings.CUCKOO_API, task_id)
+        url = "%s/tasks/report/%s" % (settings.CUCKOO_API, task_id)
         r = requests.get(url)
     except requests.RequestException:
         return index(error="It would appear our Cuckoo backend is down, "
@@ -217,4 +245,4 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging.")
     args = parser.parse_args()
 
-    application.run(host=args.host, port=args.port, debug=True)
+    application.run(host=args.host, port=args.port, debug=settings.DEBUG)

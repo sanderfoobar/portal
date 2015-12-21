@@ -1,5 +1,8 @@
 import os
 
+# Run the portal in debug mode?
+DEBUG = True
+
 # Database connection URI, PostgreSQL or MySQL is suggested.
 # Examples, see documentation for more:
 # postgresql://foo:bar@localhost:5432/portal
@@ -11,4 +14,4 @@ SQLALCHEMY_DATABASE_URI = "postgresql://cuckoo:cuckoo@localhost/portal"
 SECRET_KEY = os.urandom(32)
 
 # IP address of the Cuckoo API.
-CUCKOO_API = "127.0.0.1"
+CUCKOO_API = "http://127.0.0.1:8090"

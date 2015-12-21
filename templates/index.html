@@ -1,5 +1,5 @@
-<!doctype html>
-<html class="no-js" lang="">
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -8,74 +8,158 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-        <!-- Place favicon.ico in the root directory -->
 
-        <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="static/css/main.css">
-        <script type="text/javascript" src="static/js/jquery-2.1.4.min.js"></script>
-        <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/css/main.css">
+        <script type="text/javascript" src="/static/js/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/static/js/validator.js"></script>
     </head>
     <body>
         <div class="container">
-            <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
-                {% if error %}
-                    <label><p>{{ error }}</p></label>
-                {% endif %}
-                {% for error in errors %}
-                    <label><p>{{ error }}</p></label>
-                {% endfor %}
+            <div style="padding-top:40px;" class="col-md-9 col-md-offset-2">
+                <div class="well">
+                    {% if error %}
+                        <label><p>{{ error }}</p></label>
+                    {% endif %}
+                    {% for error in errors %}
+                        <label><p>{{ error }}</p></label>
+                    {% endfor %}
 
-                <form id="submission" method="POST" enctype="multipart/form-data" action="/">
-                    <p>Select one or more files</p>
-                    <input type="file" name="file" multiple="multiple"></input>
-                    <textarea name="url" class="form-field" placeholder="... or paste one or more URLs">{{ urls }}</textarea>
+                    <form class="form-horizontal" role="form" data-toggle="validator" id="submission" method="POST" enctype="multipart/form-data" action="/" style="margin-left:15%;">
+                        <fieldset>
+                            <!-- File Button -->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="file">Select file(s)</label>
 
-                    <div class="form-group">
-                        <label for="form_route">Network routing</label>
-                        <select name="route" id="form_route" class="form-field">
-                            {% for route in routes %}
-                                <option value="{{ route }}">{{ route }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                                <div class="col-md-6">
+                                    <input id="file" name="file" class="input-file fileUpload" multiple="multiple" type="file">
+                                </div>
+                            </div>
 
-                    <div class="form-group">
-                        <label for="form_machine">Machine</label>
-                        <select class="form-field" id="form_machine" name="machine">
-                            <option value="">First available</option>
-                            <option value="all">All</option>
-                            {% for machine in machines %}
-                                <option value="{{ machine }}">{{ machine }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                            <!-- Textarea -->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="url"></label>
 
-                    <label for="form_timeout">Timeout</label>
-                    <div class="form-group">
-                        <input class="form-field" id="form_timeout" name="timeout" type="text" placeholder="In minutes (with a maximum of 10 minutes)" value="{{ timeout }}">
-                    </div>
+                                <div class="col-md-7">
+                                    <textarea data-remote="/validate" class="form-control fileUpload has-error" id="url" placeholder="... or paste one or more URLs" name="url"></textarea>
+                                </div>
+                            </div>
 
-                    <label for="form_priority">Priority</label>
-                    <div id="form_priority" class="form-group radio">
-                        <label><input type="radio" name="priority" value="1"{% if not priority or priority == 1 %} checked{% endif %}>Low</input></label>
-                        <label><input type="radio" name="priority" value="2"{% if priority == 2 %} checked{% endif %}>Medium</input></label>
-                        <label><input type="radio" name="priority" value="3"{% if priority == 3 %} checked{% endif %}>High</input></label>
-                    </div>
+                            <!-- Select Basic -->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="route">Network routing</label>
 
-                    <label for="form_reports">Reporting formats (to receive per email)</label>
-                    <div id="form_reports" class="form-group checkbox">
-                        <label><input type="checkbox" name="report" value="txt" {% if not reports or "plain" in reports %}checked {% endif %}/>Plaintext</label>
-                        <label><input type="checkbox" name="report" value="html" {% if not reports or "html" in reports %}checked {% endif %}/>HTML</label>
-                        <label><input type="checkbox" name="report" value="pdf" {% if not reports or "pdf" in reports %}checked {% endif %}/>PDF</label> </div>
+                                <div class="col-md-4">
+                                    <select name="route" id="form_route" class="form-control">
+                                        {% for route in routes %}
+                                            <option value="{{ route }}">{{ route }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
 
-                    <label for="form_email">Your email address</label>
-                    <div class="form-group">
-                        <input class="form-field" id="form_email" name="email" type="text" placeholder="... to receive the analysis report" value="{{ email }}">
-                    </div>
+                            <!-- Select Basic -->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="machine">Machine</label>
 
-                    <button type="submit" class="btn btn-default">Analyze</button>
-                </form>
+                                <div class="col-md-4">
+                                    <select class="form-control" id="form_machine" name="machine">
+                                        <option value="">First available</option>
+                                        <option value="all">All</option>
+                                        {% for machine in machines %}
+                                            <option value="{{ machine }}">{{ machine }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="timeout">Timeout</label>
+
+                                <div class="col-md-3" style="margin-right: 220px;">
+                                    <input id="timeout" name="timeout" type="number" min="1" max="30" placeholder="" class="form-control input-md"
+                                           required="">
+
+                                </div>
+
+                                <div class="col-md-offset-3">
+                                    <span style="display:inline-block;margin-left: 16px;" class="help-block">In minutes (with a maximum of 30 minutes)</span>
+                                </div>
+                            </div>
+
+                            <!-- Multiple Radios (inline) -->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="priority">Priority</label>
+                                <div class="col-md-6">
+                                    <label class="radio-inline" for="priority-0"><input type="radio" name="priority" value="1"{% if not priority or priority == 1 %} checked{% endif %}>Low</input></label>
+                                    <label class="radio-inline" for="priority-1"><input type="radio" name="priority" value="2"{% if priority == 2 %} checked{% endif %}>Medium</input></label>
+                                    <label class="radio-inline" for="priority-2"><input type="radio" name="priority" value="3"{% if priority == 3 %} checked{% endif %}>High</input></label>
+                                </div>
+                            </div>
+
+                            <!-- Multiple Checkboxes (inline) -->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="report">Reporting formats (to receive per email)</label>
+
+                                <div class="col-md-6">
+                                    <label class="checkbox-inline" for="report-0"><input type="checkbox" name="report" id="report-0" value="txt" {% if not reports or "plain" in reports %}checked {% endif %}/>Plaintext</label>
+                                    <label class="checkbox-inline" for="report-1"><input type="checkbox" name="report" id="report-1" value="html" {% if not reports or "html" in reports %}checked {% endif %}/>HTML</label>
+                                    <label class="checkbox-inline" for="report-2"><input type="checkbox" name="report" id="report-2" value="pdf" {% if not reports or "pdf" in reports %}checked {% endif %}/>PDF</label>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="email">Your email address</label>
+
+                                <div class="col-md-6">
+                                    <input id="email" name="email" type="email" placeholder="... to receive the analysis report"
+                                           class="form-control input-md" required="">
+
+                                </div>
+                            </div>
+
+                            <!-- Button -->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="singlebutton"><br></label><br>
+
+                                <div class="col-md-6">
+                                    <button id="btn_submit" type="submit" class="btn btn-default btn-primary">Analyze</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </form>
+                </div>
             </div>
         </div>
+
+        <script>
+            $(document).ready(function() {
+                function validate_fileUpload(){
+                    return !(!$('#file').val() && !$('#url').val());
+                }
+
+                $('form').on('submit', function(e){
+                    if(!validate_fileUpload()){
+
+                        $.each($('textarea#url, input#file'), function(){
+                           $(this).closest('.form-group').addClass('has-err');
+                        });
+
+                        e.preventDefault();
+                    }
+                });
+
+                function clear_labels(){
+                    $('form .form-group').each(function(){ $(this).removeClass('has-err') })
+                }
+
+                $('textarea#url').keypress(function() { clear_labels() });
+                $('input#file').on("change", function(){ clear_labels() });
+            });
+        </script>
     </body>
 </html>
