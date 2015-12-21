@@ -37,9 +37,9 @@ def index(**kwargs):
                            routes=["none", "dirty", "vpn"],
                            **kwargs)
 
-def submit_file(f, data, custom):
+def submit_file(f, filename, data, custom):
     files = {
-        "file": (f.filename, f),
+        "file": (filename, f),
     }
 
     custom["uniqid"] = uniqid()
@@ -121,7 +121,7 @@ def submit():
         if not f.filename:
             continue
 
-        uniqid = submit_file(f, data, custom)
+        uniqid = submit_file(f, f.filename, data, custom)
         if uniqid:
             tasks.append((uniqid, f.filename))
         else:
